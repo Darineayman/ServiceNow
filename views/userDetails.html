@@ -1,0 +1,22 @@
+<!-- views/userDetails.html -->
+<div class="container mt-4" ng-controller="userDetailsController">
+  <h1 class="mb-4">User Details</h1>
+
+  <div ng-if="!user.id" class="alert alert-info">
+    Loading user details...
+  </div>
+
+
+  <div ng-if="user.id" class="card shadow-sm">
+    <div class="card-body">
+      <h5 class="card-title">{{ user.name }}</h5>
+      <h6 class="card-subtitle mb-2 text-muted">{{ user.email }}</h6>
+
+      <p class="card-text">
+        <strong>ID:</strong> {{ user.id }} <br />
+      </p>
+
+      <a href="#!/products" class="btn btn-secondary">Back to List</a>
+    </div>
+  </div>
+</div>

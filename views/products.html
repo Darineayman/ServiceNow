@@ -1,0 +1,81 @@
+<div class="container mt-4">
+  <h1 class="mb-4">Student List App</h1>
+  <form ng-submit="addUser()" class="mb-4" novalidate>
+    <div class="row g-2">
+      <div class="col-md-4">
+        <input
+          type="text"
+          class="form-control"
+          placeholder="Name"
+          ng-model="newUser.name"
+          required
+        />
+      </div>
+      <div class="col-md-4">
+        <input
+          type="email"
+          class="form-control"
+          placeholder="Email"
+          ng-model="newUser.email"
+          required
+        />
+      </div>
+      <div class="col-md-4">
+        <button type="submit" class="btn btn-primary w-100">Add Student</button>
+      </div>
+    </div>
+  </form>
+
+
+  <div ng-if="editingUser" class="card p-3 mb-4">
+    <h5>Edit Student</h5>
+
+    <input type="text" class="form-control mb-2" ng-model="editingUser.name" />
+
+    <input
+      type="email"
+      class="form-control mb-2"
+      ng-model="editingUser.email"
+    />
+
+    <button class="btn btn-success me-2" ng-click="updateUser()">Update</button>
+
+    <button class="btn btn-secondary" ng-click="editingUser = null">
+      Cancel
+    </button>
+  </div>
+
+
+  <table class="table table-striped table-hover align-middle mb-0">
+      <thead class="table-dark">
+        <tr>
+          <th scope="col">#</th>
+          <th scope="col">Name</th>
+          <th scope="col">Email</th>
+          <th scope="col" style="width: 220px;">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr ng-repeat="user in users" class="table-light">
+          <th scope="row">{{$index + 1}}</th>
+          <td>{{user.name}}</td>
+          <td>{{user.email}}</td>
+          <td>
+            <div class="d-flex gap-2">
+              <button class="btn btn-warning btn-sm" ng-click="editUser(user)">
+                <i class="bi bi-pencil-square"></i> Edit
+              </button>
+
+              <button class="btn btn-danger btn-sm" ng-click="deleteUser(user.id)">
+                <i class="bi bi-trash"></i> Delete
+              </button>
+
+              <a class="btn btn-info btn-sm text-white" href="#!/userDetails/{{user.id}}">
+                <i class="bi bi-info-circle"></i> Detail
+              </a>
+            </div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+</div>
