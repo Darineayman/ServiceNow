@@ -1,0 +1,190 @@
+<!doctype html>
+<html lang="en" ng-app="myApp">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Student List App</title>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.9/angular.min.js"></script>
+
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+  </head>
+
+  <body ng-controller="myCtrl">
+    <div class="container mt-4">
+      <h1 class="mb-4">Student List App</h1>
+
+      <form ng-submit="addUser()" class="mb-4" novalidate>
+        <div class="row g-2">
+          <div class="col-md-4">
+            <input
+              type="text"
+              class="form-control"
+              placeholder="Name"
+              ng-model="newUser.name"
+              required
+            />
+          </div>
+          <div class="col-md-4">
+            <input
+              type="email"
+              class="form-control"
+              placeholder="Email"
+              ng-model="newUser.email"
+              required
+            />
+          </div>
+          <div class="col-md-4">
+            <button type="submit" class="btn btn-primary w-100">
+              Add Student
+            </button>
+          </div>
+        </div>
+      </form>
+
+      <div ng-if="editingUser" class="card p-3 mb-4">
+        <h5>Edit Student</h5>
+
+        <input
+          type="text"
+          class="form-control mb-2"
+          ng-model="editingUser.name"
+        />
+
+        <input
+          type="email"
+          class="form-control mb-2"
+          ng-model="editingUser.email"
+        />
+
+        <button class="btn btn-success me-2" ng-click="updateUser()">
+          Update
+        </button>
+
+        <button class="btn btn-secondary" ng-click="editingUser = null">
+          Cancel
+        </button>
+      </div>
+
+      <table class="table table-striped">
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Name</th>
+            <th>Email</th>
+            <th width="180">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr ng-repeat="user in users">
+            <td>{{$index + 1}}</td>
+            <td>{{user.name}}</td>
+            <td>{{user.email}}</td>
+            <td>
+              <button
+                class="btn btn-warning btn-sm me-2"
+                ng-click="editUser(user)"
+              >
+                Edit
+              </button>
+
+              <button
+                class="btn btn-danger btn-sm"
+                ng-click="deleteUser(user.id)"
+              >
+                Delete
+              </button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <script>
+      let app = angular.module("myApp", []);
+
+      app.service("myService", function ($http) {
+        this.apiKey = "sb_publishable_NE7gABdzJPAkrW00Aa7cJw_q4TI69h2";
+        this.apiLink =
+          "https://xrslatldfiyfpszgmptb.supabase.co/rest/v1/users";
+
+        this.headers = {
+          apikey: this.apiKey,
+          Authorization: "Bearer " + this.apiKey,
+          "Content-Type": "application/json",
+          Prefer: "return=representation",
+        };
+
+        this.getUsers = function () {
+          return $http.get(this.apiLink, { headers: this.headers });
+        };
+
+        this.addUser = function (user) {
+          return $http.post(this.apiLink, user, {
+            headers: this.headers,
+          });
+        };
+
+        this.deleteUser = function (id) {
+          return $http.delete(this.apiLink + "?id=eq." + id, {
+            headers: this.headers,
+          });
+        };
+
+        this.updateUser = function (id, user) {
+          return $http.patch(this.apiLink + "?id=eq." + id, user, {
+            headers: this.headers,
+          });
+        };
+      });
+      app.controller("myCtrl", function ($scope, myService) {
+        $scope.users = [];
+        $scope.newUser = {};
+        $scope.editingUser = null;
+
+        // Load users
+        $scope.getUsers = function () {
+          myService.getUsers().then(function (response) {
+            $scope.users = response.data;
+          });
+        };
+
+        $scope.getUsers();
+
+       
+        $scope.addUser = function () {
+          if ($scope.newUser.name && $scope.newUser.email) {
+            myService.addUser($scope.newUser).then(function () {
+              $scope.newUser = {};
+              $scope.getUsers();
+            });
+          }
+        };
+
+        
+        $scope.deleteUser = function (id) {
+          myService.deleteUser(id).then(function () {
+            $scope.getUsers();
+          });
+        };
+
+        
+        $scope.editUser = function (user) {
+          $scope.editingUser = angular.copy(user);
+        };
+
+        
+        $scope.updateUser = function () {
+          myService
+            .updateUser($scope.editingUser.id, $scope.editingUser)
+            .then(function () {
+              $scope.editingUser = null;
+              $scope.getUsers();
+            });
+        };
+      });
+    </script>
+  </body>
+</html>
