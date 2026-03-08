@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+   <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.9/angular.min.js"></script>
+
+    <!-- Bootstrap CSS -->
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+  <title>Document</title>
+</head>
+<body ng-app="studentApp" ng-controller="studentCtrl">
+
+<div class="container mt-5">
+
+  <h2 class="mb-4">Student Management</h2>
+
+  <!-- Search -->
+  <div class="mb-3">
+    <input type="text" 
+           class="form-control" 
+           placeholder="Search by name..."
+           ng-model="searchText">
+  </div>
+
+  <!-- Sort Buttons -->
+  <div class="mb-3">
+    <button class="btn btn-primary me-2" ng-click="sortByMarks(false)">
+      Sort by Marks ↑
+    </button>
+
+    <button class="btn btn-secondary" ng-click="sortByMarks(true)">
+      Sort by Marks ↓
+    </button>
+  </div>
+
+  <!-- Student List -->
+  <ul class="list-group">
+    <li class="list-group-item"
+        ng-repeat="student in students | filter: {name: searchText} | orderBy:sortColumn:reverse"
+        ng-class="{'list-group-item-success': student.marks > 80}">
+      
+      <strong>{{student.name}}</strong> 
+      <span class="float-end">Marks: {{student.marks}}</span>
+    </li>
+  </ul>
+
+  <!-- No Student Found Message -->
+  <div class="alert alert-danger mt-3"
+       ng-if="(students | filter:{name: searchText}).length === 0">
+    No student found.
+  </div>
+
+</div>
+
+<script>
+  var app = angular.module("studentApp", []);
+
+  app.controller("studentCtrl", function($scope) {
+
+    $scope.students = [
+      { name: "Dareen", marks: 75 },
+      { name: "Ayman", marks: 88 },
+      { name: "Hamed", marks: 92 },
+      { name: "Ramzy", marks: 60 },
+      { name: "Elsayed", marks: 81 }
+    ];
+
+    $scope.sortColumn = "marks";
+    $scope.reverse = false;
+
+    $scope.sortByMarks = function(reverseOrder) {
+      $scope.sortColumn = "marks";
+      $scope.reverse = reverseOrder;
+    };
+
+  });
+</script>
+
+</body>
+</html>

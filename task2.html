@@ -1,0 +1,107 @@
+<!doctype html>
+<html ng-app="studentApp">
+<head>
+  <meta charset="UTF-8" />
+  <title>Task List </title>
+
+  <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.9/angular.min.js"></script>
+
+  <link
+    href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css"
+    rel="stylesheet"
+  />
+</head>
+
+<body class="bg-light">
+
+  <div class="container mt-5" ng-controller="parentCtrl">
+    <div class="card shadow p-4">
+      <h2 class="text-center mb-4">Task List</h2>
+
+      <div ng-controller="childCtrl">
+        <div class="input-group mb-3">
+          <input
+            type="text"
+            class="form-control"
+            ng-model="studentName"
+            placeholder="Type a name"
+          />
+
+          <button
+            class="btn btn-primary"
+            ng-click="addStudent()"
+            ng-disabled="!studentName || studentName.trim().length == 0"
+          >
+            Add
+          </button>
+        </div>
+      </div>
+
+
+      <div
+        class="alert alert-secondary text-center"
+        ng-hide="students.length > 0"
+      >
+        No tasks added yet.
+      </div>
+
+      <ul class="list-group" ng-show="students.length > 0">
+        <li
+          class="list-group-item d-flex justify-content-between align-items-center"
+          ng-repeat="s in students track by $index"
+        >
+          <div>
+            <input
+              type="checkbox"
+              class="form-check-input me-2"
+              ng-model="s.completed"
+            />
+
+            <span
+              ng-class="{'text-decoration-line-through text-muted': s.completed}"
+            >
+              {{s.name}}
+            </span>
+          </div>
+
+          <button
+            class="btn btn-danger btn-sm"
+            ng-click="deleteStudent($index)"
+          >
+            Delete
+          </button>
+        </li>
+      </ul>
+    </div>
+  </div>
+
+  <script>
+    var studentApp = angular.module("studentApp", []);
+
+    studentApp.controller("parentCtrl", function ($scope) {
+      $scope.students = [];
+
+      $scope.deleteStudent = function (i) {
+        $scope.students.splice(i, 1);
+      };
+    });
+
+    studentApp.controller("childCtrl", function ($scope) {
+      $scope.studentName = "";
+
+      $scope.addStudent = function () {
+        if (!$scope.studentName || $scope.studentName.trim().length == 0)
+          return;
+
+        $scope.students.push({
+          name: $scope.studentName.trim(),
+          completed: false,
+        });
+
+        $scope.studentName = "";
+      };
+    });
+  </script>
+
+</body>
+</html>
